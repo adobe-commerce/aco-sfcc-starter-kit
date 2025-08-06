@@ -1,0 +1,7 @@
+{
+  "full": ["backoffice"],
+  "delta": ["backoffice"],
+  "metadata": ["backoffice"],
+  "product": ["backoffice"],
+  "priceBook": ["backoffice"]
+}

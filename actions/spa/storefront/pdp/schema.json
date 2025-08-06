@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "sku": { "type": "string" },
+    "pricebookId": { "type": "string" },
+    "locale": { "type": "string" }
+  },
+  "required": ["sku", "pricebookId", "locale"]
+}

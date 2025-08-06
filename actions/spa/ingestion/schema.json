@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "event": { "type": "string" },
+    "value": {}
+  },
+  "required": ["event", "value"]
+}

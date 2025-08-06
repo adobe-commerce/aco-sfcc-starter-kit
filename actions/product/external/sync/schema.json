@@ -1,0 +1,7 @@
+{
+  "type": "object",
+  "properties": {
+    "skus": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["skus"]
+}

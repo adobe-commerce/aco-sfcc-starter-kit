@@ -1,0 +1,8 @@
+[
+  {
+    "key": "backoffice",
+    "label": "Salesforce Provider",
+    "description": "Salesforce Provider that will receive events from Salesforce",
+    "docs_url": null
+  }
+]

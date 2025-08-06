@@ -1,0 +1,83 @@
+ingestion:
+  function: ./ingestion/index.js
+  web: 'yes'
+  runtime: nodejs:22
+  inputs:
+    LOG_LEVEL: debug
+    OAUTH_ORG_ID: $OAUTH_ORG_ID
+    OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+    OAUTH_CLIENT_SECRET: $OAUTH_CLIENT_SECRET
+    OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+    OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+    IO_CONSUMER_ID: $IO_CONSUMER_ID
+    IO_PROJECT_ID: $IO_PROJECT_ID
+    IO_WORKSPACE_ID: $IO_WORKSPACE_ID
+    IO_MANAGEMENT_BASE_URL: $IO_MANAGEMENT_BASE_URL
+    AIO_runtime_namespace: $AIO_RUNTIME_NAMESPACE
+  annotations:
+    require-adobe-auth: true
+    final: true
+
+storefront-product-details:
+  function: ./storefront/pdp/index.js
+  web: 'yes'
+  runtime: nodejs:22
+  inputs:
+    ACO_TENANT_ID: $ACO_TENANT_ID
+    ACO_REGION: $ACO_REGION
+    ACO_ENVIRONMENT_TYPE: $ACO_ENVIRONMENT_TYPE
+  annotations:
+    require-adobe-auth: true
+    final: true
+
+aco-connectivity:
+  function: ./connectivity/aco/index.js
+  web: 'yes'
+  runtime: nodejs:22
+  inputs:
+    ACO_TENANT_ID: $ACO_TENANT_ID
+    ACO_REGION: $ACO_REGION
+    ACO_ENVIRONMENT_TYPE: $ACO_ENVIRONMENT_TYPE
+    OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+    OAUTH_CLIENT_SECRET: $OAUTH_CLIENT_SECRET
+  annotations:
+    require-adobe-auth: true
+    final: true
+
+salesforce-connectivity:
+  function: ./connectivity/salesforce/index.js
+  web: 'yes'
+  runtime: nodejs:22
+  inputs:
+    SFCC_API_BASE_URL: $SFCC_API_BASE_URL
+    SFCC_REALM_ID: $SFCC_REALM_ID
+    SFCC_INSTANCE_ID: $SFCC_INSTANCE_ID
+    SFCC_ORGANIZATION_ID: $SFCC_ORGANIZATION_ID
+    SFCC_AUTH_URL: $SFCC_AUTH_URL
+    SFCC_CLIENT_ID: $SFCC_CLIENT_ID
+    SFCC_CLIENT_SECRET: $SFCC_CLIENT_SECRET
+    SFCC_SITE_ID: $SFCC_SITE_ID
+  annotations:
+    require-adobe-auth: true
+    final: true
+
+list-metadata:
+  function: ./list-metadata/index.js
+  web: 'yes'
+  runtime: nodejs:22
+  inputs:
+    LOG_LEVEL: debug
+    SFCC_LOCALES_TO_SYNC: $SFCC_LOCALES_TO_SYNC
+  annotations:
+    require-adobe-auth: true
+    final: true
+
+last-sync-timestamps:
+  function: ./last-sync-timestamps/index.js
+  web: 'yes'
+  runtime: nodejs:22
+  inputs:
+    LOG_LEVEL: debug
+  annotations:
+    require-adobe-auth: true
+    final: true

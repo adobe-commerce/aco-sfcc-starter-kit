@@ -1,0 +1,49 @@
+{
+  "full": {
+    "backoffice": {
+      "sfcc.full.sync": {
+        "sampleEventTemplate": {
+          "data": {}
+        }
+      }
+    }
+  },
+  "delta": {
+    "backoffice": {
+      "sfcc.delta.sync": {
+        "sampleEventTemplate": {
+          "data": {}
+        }
+      }
+    }
+  },
+  "product": {
+    "backoffice": {
+      "sfcc.product.sync": {
+        "sampleEventTemplate": {
+          "data": {
+            "skus": ["ID-0001", "ID-0002", "ID-0003"]
+          }
+        }
+      }
+    }
+  },
+  "metadata": {
+    "backoffice": {
+      "sfcc.metadata.sync": {
+        "sampleEventTemplate": {
+          "data": {}
+        }
+      }
+    }
+  },
+  "priceBook": {
+    "backoffice": {
+      "sfcc.price-book.sync": {
+        "sampleEventTemplate": {
+          "data": {}
+        }
+      }
+    }
+  }
+}

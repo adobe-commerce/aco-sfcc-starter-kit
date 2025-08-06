@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "checkJs": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "target": "ESNext",
+
+    "moduleResolution": "node",
+    "module": "CommonJS",
+    "strictNullChecks": true,
+
+    "baseUrl": "./",
+    "rootDir": "./",
+    "typeRoots": ["./types"],
+    "jsx": "react"
+  },
+
+  "exclude": ["**/node_modules/*", "**/dist/*", "**/generated/*"],
+  "include": [
+    "./actions/**/*.js",
+    "./api/**/*.js",
+    "./hooks/**/*.js",
+    "./scripts/**/*.js",
+    "./transformers/**/*.d.ts",
+    "./types/**/*.d.ts",
+    "./utils/**/*.js",
+    "./web-src/**/*.js",
+    "./web-src/**/*.jsx"
+  ]
+}
