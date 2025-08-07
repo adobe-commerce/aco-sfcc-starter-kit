@@ -107,6 +107,22 @@ const checkSalesforceConnectivity = async (client, organizationId, siteId) => {
 };
 
 /**
+ * Get the catalog ID assigned to the site from Salesforce via our custom endpoint.
+ *
+ * @param {import('ky').KyInstance} client - The Salesforce HTTP client.
+ * @param {string} organizationId - The Salesforce organization ID.
+ * @param {string} siteId - The Salesforce site ID.
+ * @returns {Promise<import('ky').KyResponse>} The response from the Salesforce API.
+ */
+const getSalesforceSiteCatalogId = async (client, organizationId, siteId) => {
+  return await client.get(`custom/aco/v1/organizations/${organizationId}/catalog`, {
+    searchParams: {
+      siteId,
+    },
+  });
+};
+
+/**
  * Get price books from Salesforce via our custom endpoint.
  *
  * @param {import('ky').KyInstance} client - The Salesforce HTTP client.
@@ -193,24 +209,24 @@ const getSalesforceTrackedChanges = async (client, organizationId, siteId, limit
  * @param {import('ky').KyInstance} client - The Salesforce HTTP client.
  * @param {string} organizationId - The Salesforce organization ID.
  * @param {string} siteId - The Salesforce site ID.
+ * @param {string} catalogId - The catalog ID to search for.
  * @param {number} limit - The response page size. Max 200.
  * @param {number} offset - The response page offset for pagination.
- * @param {string} searchPhrase - The search phrase to look for in product names.
- * @param {string[]} expand - The expand parameter to pass to the Salesforce API.
  * @returns {Promise<import('ky').KyResponse>} The response from the Salesforce API.
  */
-const searchSalesforceProducts = async (client, organizationId, siteId, limit, offset, searchPhrase, expand) => {
+const searchSalesforceProducts = async (client, organizationId, siteId, catalogId, limit, offset) => {
   return await client.post(`product/products/v1/organizations/${organizationId}/product-search`, {
     searchParams: { siteId },
     body: JSON.stringify({
       limit,
       query: {
-        textQuery: {
-          fields: ['name'],
-          searchPhrase,
+        termQuery: {
+          fields: ['catalogId'],
+          operator: 'is',
+          values: [catalogId],
         },
       },
-      expand,
+      expand: ['none'],
       offset,
     }),
   });
@@ -223,6 +239,7 @@ module.exports = {
   getSalesforcePriceBooks,
   getSalesforcePriceBookById,
   getSalesforceProductByIds,
+  getSalesforceSiteCatalogId,
   getSalesforceTrackedChanges,
   searchSalesforceProducts,
 };

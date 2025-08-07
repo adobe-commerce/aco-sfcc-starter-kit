@@ -17,8 +17,8 @@ const { createAcoClient } = require('./aco');
 const { syncPricesFromProducts } = require('./prices');
 const {
   createSalesforceAdminHttpClient,
-  searchSalesforceProducts,
   getSalesforceProductByIds,
+  searchSalesforceProducts,
 } = require('./salesforce');
 const { AIO_STATE_MAX_TTL, AIO_STATE_KEY_LAST_SYNC } = require('../actions/constants');
 const { StarterKitActionError } = require('../actions/responses');
@@ -33,11 +33,20 @@ const BATCH_SIZE = 100;
  * @param {AcoClientOptions} acoClientOptions - Configuration options for the ACO client.
  * @param {string} salesforceOrgId - The Salesforce organization ID.
  * @param {string} siteId - The Salesforce site ID.
+ * @param {string} catalogId - The catalog ID assigned to the Salesforce site.
  * @param {string} locale - The locale to sync.
  * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @throws {StarterKitActionError} If there's an error retrieving or syncing the product
  */
-const syncAllProducts = async (salesforceApiOptions, acoClientOptions, salesforceOrgId, siteId, locale, logger) => {
+const syncAllProducts = async (
+  salesforceApiOptions,
+  acoClientOptions,
+  salesforceOrgId,
+  siteId,
+  catalogId,
+  locale,
+  logger,
+) => {
   logger.info(`Syncing all products from Salesforce to ACO for siteId: ${siteId} and locale: ${locale}`);
 
   logger.debug('Initializing AIO state lib');
@@ -54,9 +63,14 @@ const syncAllProducts = async (salesforceApiOptions, acoClientOptions, salesforc
   let totalAccepted = 0;
 
   do {
-    const res = await searchSalesforceProducts(salesforceClient, salesforceOrgId, siteId, BATCH_SIZE, offset, '*', [
-      'none',
-    ]);
+    const res = await searchSalesforceProducts(
+      salesforceClient,
+      salesforceOrgId,
+      siteId,
+      catalogId,
+      BATCH_SIZE,
+      offset,
+    );
     if (!res.ok) {
       logger.error(`[${locale}] Failed to retrieve product ids from Salesforce: ${res.status} ${res.statusText}`);
       throw new StarterKitActionError('Failed to retrieve product ids from Salesforce', res.status, res.statusText);

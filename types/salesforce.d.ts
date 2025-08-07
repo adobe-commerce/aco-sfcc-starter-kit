@@ -16,6 +16,14 @@ declare interface SalesforceOAuthTokenResponse {
   expires_in: number;
 }
 
+declare interface SalesforceSiteCatalogResponse {
+  id: string;
+  displayName: string;
+  description: string;
+  creationDate: string;
+  lastModified: string;
+}
+
 declare interface SalesforceProductsResponse {
   count: number;
   data: SalesforceProduct[];
