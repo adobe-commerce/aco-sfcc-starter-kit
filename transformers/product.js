@@ -67,7 +67,7 @@ const transformCustomAttributes = attributes => {
   attributes.forEach(attribute => {
     acoAttributes.push({
       code: attribute.id,
-      values: attribute.values,
+      values: attribute.values.map(v => v.toString()),
     });
   });
   return acoAttributes;
