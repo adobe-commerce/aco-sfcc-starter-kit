@@ -2,7 +2,6 @@ const nodePlugin = require('eslint-plugin-n');
 const jsdoc = require('eslint-plugin-jsdoc');
 const react = require('eslint-plugin-react');
 
-// eslint-disable-next-line n/no-extraneous-require
 const pluginJs = require('@eslint/js');
 const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
 
