@@ -17,11 +17,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: '22.3.x'
 
       - name: Install dependencies
-        run: npm install --no-fund --no-audit
+        run: npm install
 
       - name: Run lint
         run: npm run lint
