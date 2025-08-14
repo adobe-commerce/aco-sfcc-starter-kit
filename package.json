@@ -64,8 +64,8 @@
     "onboard": "node --no-warnings -e 'require(\"./scripts/onboarding/index.js\").main()'",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "prettier --write \"**/*.{js,ts,json,jsx,tsx}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,json,jsx,tsx}\"",
     "test": "jest --passWithNoTests ./test"
   },
   "engines": {
