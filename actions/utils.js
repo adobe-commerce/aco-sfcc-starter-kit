@@ -58,7 +58,8 @@ function getMissingKeys(obj, required) {
  * @param {Array} requiredParams List of required input parameters. Each element can be multi level deep using a '.'
  *   separator e.g. 'myRequiredObj.myRequiredKey'.
  * @param {Array} requiredHeaders List of required input headers.
- * @returns {string} If the return value is not null, then it holds an error message describing the missing inputs.
+ * @returns {string | null} If the return value is not null, then it holds an error message describing the missing
+ *   inputs.
  */
 function checkMissingRequestInputs(params, requiredParams = [], requiredHeaders = []) {
   let errorMessage = null;

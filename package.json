@@ -1,6 +1,6 @@
 {
-  "name": "aco-sfcc-starter-kit",
-  "version": "0.0.1",
+  "name": "Commerce Optimizer SFCC Starter Kit",
+  "version": "1.0.0",
   "author": "Adobe Inc.",
   "license": "Apache-2.0",
   "private": true,
@@ -65,9 +65,7 @@
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "graphql:compile": "node --env-file=.env graphql-codegen.js",
-    "graphql:tsc": "cd ./utils/graphql/generated && tsc --emitDeclarationOnly --declaration ./gql.ts && rimraf ./gql.ts",
-    "graphql:generate": "npm run graphql:compile && npm run graphql:tsc"
+    "test": "jest --passWithNoTests ./test"
   },
   "engines": {
     "node": ">=18"
