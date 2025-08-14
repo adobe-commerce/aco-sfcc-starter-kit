@@ -10,7 +10,7 @@
   governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   DialogContainer,
   Dialog,
@@ -22,24 +22,19 @@ import {
   View,
   Button,
   ButtonGroup,
-} from "@adobe/react-spectrum";
+} from '@adobe/react-spectrum';
 
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
-import Close from "@spectrum-icons/workflow/Close";
+import Close from '@spectrum-icons/workflow/Close';
 
 /**
  * The dialog that shows the result of an action invocation.
+ *
  * @param {InvokeResultDialogProps} props - The props for the dialog.
  */
-export function InvokeResultDialog({
-  open,
-  onDismiss,
-  result,
-  title,
-  dataKey,
-}) {
+export function InvokeResultDialog({ open, onDismiss, result, title, dataKey }) {
   /** @type {UseStateHook<Record<string, any>>} */
   const [data, setData] = useState({});
 
@@ -61,7 +56,7 @@ export function InvokeResultDialog({
           <Heading>{title}</Heading>
           <Divider />
           <Content>
-            <Grid columns={["1fr", "1fr"]} gap="size-200" rows="auto">
+            <Grid columns={['1fr', '1fr']} gap="size-200" rows="auto">
               <Well UNSAFE_style={{ paddingBlock: 0 }}>
                 <View height="100%">
                   <SyntaxHighlighter
@@ -70,10 +65,10 @@ export function InvokeResultDialog({
                     wrapLines
                     wrapLongLines
                     customStyle={{
-                      background: "none",
+                      background: 'none',
                     }}
                   >
-                    {meta.curlRequest ?? "CURL Request Not Found"}
+                    {meta.curlRequest ?? 'CURL Request Not Found'}
                   </SyntaxHighlighter>
                 </View>
               </Well>
@@ -85,7 +80,7 @@ export function InvokeResultDialog({
                     wrapLines
                     wrapLongLines
                     customStyle={{
-                      background: "none",
+                      background: 'none',
                     }}
                   >
                     {JSON.stringify(data, null, 2)}

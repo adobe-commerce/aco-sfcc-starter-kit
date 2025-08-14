@@ -13,6 +13,7 @@ config.json
 .env*
 !.env.dist
 .aio
+.npmrc
 
 # Adobe I/O console config
 console.json
