@@ -62,8 +62,8 @@
   },
   "scripts": {
     "onboard": "node --no-warnings -e 'require(\"./scripts/onboarding/index.js\").main()'",
-    "lint": "npx eslint .",
-    "lint:fix": "npx eslint --fix .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "jest --passWithNoTests ./test"
