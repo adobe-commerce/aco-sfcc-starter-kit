@@ -51,6 +51,11 @@ declare interface SalesforceProduct {
   customAttributes: SalesforceProductCustomAttributes[];
   creationDate: string;
   lastModified: string;
+  type: 'SIMPLE' | 'MASTER' | 'VARIANT' | 'VARIATION_GROUP' | 'BUNDLE' | 'BUNDLED' | 'PRODUCT_SET' | 'PRODUCT_SET_PRODUCT';
+  variationAttributes: SalesforceProductVariationAttribute[];
+  variants?: SalesforceProductVariant[];
+  variationValues?: SalesforceProductVariationValues;
+  master?: SalesforceProductMaster;
 }
 
 declare interface SalesforceProductPrice {
@@ -124,4 +129,30 @@ declare interface SalesforceTrackedChanges {
   type: 'product' | 'priceBook' | 'price';
   isDeleted: boolean;
   lastModified: string;
+}
+
+declare interface SalesforceProductVariationAttribute {
+  id: string;
+  attributeId: string;
+  name: string;
+  values: SalesforceProductVariationAttributeValue[];
+}
+
+declare interface SalesforceProductVariationAttributeValue {
+  description: string;
+  name: string;
+  value: string;
+}
+
+declare interface SalesforceProductVariant {
+  productId: string;
+  variationValues: SalesforceProductVariationValues;
+}
+
+declare interface SalesforceProductVariationValues {
+  [key: string]: unknown;
+}
+
+declare interface SalesforceProductMaster {
+  id: string;
 }
