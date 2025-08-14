@@ -69,7 +69,7 @@
     "test": "jest --passWithNoTests ./test"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "aio-app-builder-templates": [
     "@adobe/generator-app-events-generic",
