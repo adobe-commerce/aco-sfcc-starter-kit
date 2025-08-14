@@ -13,7 +13,7 @@
 import { useState, useEffect } from 'react';
 import deepmerge from 'deepmerge';
 import ky from 'ky';
-import config from '../config.json';
+import config from '../config.json'; // eslint-disable-line n/no-missing-import
 import { useIms } from '../contexts/ims-context.jsx';
 
 /**
