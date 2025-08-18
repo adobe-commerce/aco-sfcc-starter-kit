@@ -86,6 +86,16 @@ const productViewOptionFieldsFragment = gql`
   }
 `;
 
+/** The fields we retrieve from a ProductViewLink. */
+const productViewLinkFieldsFragment = gql`
+  fragment ProductViewLinkFields on ProductViewLink {
+    linkTypes
+    product {
+      sku
+    }
+  }
+`;
+
 /** The base fields we retrieve from any Product. */
 const productViewBaseFieldsFragment = gql`
   fragment ProductViewBaseFields on ProductView {
@@ -130,6 +140,9 @@ const GET_PRODUCT_DETAILS = gql`
           ...ProductViewPriceRangeFields
         }
       }
+      links {
+					...ProductViewLinkFields
+			}
     }
   }
 
@@ -140,6 +153,7 @@ const GET_PRODUCT_DETAILS = gql`
   ${productViewPriceRangeFieldsFragment}
   ${productViewOptionFieldsFragment}
   ${productViewOptionValueFieldsFragment}
+  ${productViewLinkFieldsFragment}
 `;
 
 module.exports = {
