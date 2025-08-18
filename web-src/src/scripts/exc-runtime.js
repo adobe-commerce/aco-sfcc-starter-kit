@@ -1,3 +1,5 @@
+/* eslint-disable */
+/* prettier-ignore */
 // @ts-nocheck
 /*
   Copyright 2025 Adobe. All rights reserved.

@@ -38,8 +38,9 @@ module.exports = [
     },
 
     rules: {
-      // Global types seem to be resolved by the IDE but not by ESLint.
       'jsdoc/no-undefined-types': 'off',
+      'jsdoc/require-returns-description': 'off',
+      'jsdoc/tag-lines': 'off',
     },
   },
 
@@ -60,10 +61,40 @@ module.exports = [
     rules: {
       'n/exports-style': ['error', 'module.exports'],
       'jsdoc/require-jsdoc': 'off',
-
-      // Global types seem to be resolved by the IDE but not by ESLint.
       'jsdoc/no-undefined-types': 'off',
       'jsdoc/newline-after-description': 'off',
+      'jsdoc/tag-lines': 'off',
+      'jsdoc/require-returns-description': 'off',
+    },
+  },
+
+  {
+    files: ['test/**/*.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      parserOptions: {
+        ecmaVersion: 'latest',
+      },
+      globals: {
+        node: true,
+        jest: true,
+        describe: true,
+        test: true,
+        it: true,
+        expect: true,
+        beforeEach: true,
+        afterEach: true,
+        beforeAll: true,
+        afterAll: true,
+      },
+    },
+    rules: {
+      'n/exports-style': ['error', 'module.exports'],
+      'jsdoc/require-jsdoc': 'off',
+      'jsdoc/no-undefined-types': 'off',
+      'jsdoc/newline-after-description': 'off',
+      'jsdoc/tag-lines': 'off',
+      'jsdoc/require-returns-description': 'off',
     },
   },
 

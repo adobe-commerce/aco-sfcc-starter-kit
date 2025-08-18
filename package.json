@@ -1,12 +1,12 @@
 {
   "name": "aco-sfcc-starter-kit",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "Adobe Inc.",
   "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "@adobe-commerce/aco-ts-sdk": "^0.4.1",
-    "@adobe/aio-lib-ims": "^7.0.1",
+    "@adobe/aio-lib-ims": "^8.1.0",
     "@adobe/aio-lib-state": "^5.1.0",
     "@adobe/aio-sdk": "^6",
     "@adobe/exc-app": "^1.3.0",
@@ -44,6 +44,7 @@
     "@babel/plugin-transform-react-jsx": "^7.8.3",
     "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
+    "@eslint/js": "^8.57.1",
     "@openwhisk/wskdebug": "^1.3.0",
     "@types/deepmerge": "^2.1.0",
     "eslint": "^8.57.1",
@@ -63,14 +64,12 @@
     "onboard": "node --no-warnings -e 'require(\"./scripts/onboarding/index.js\").main()'",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "graphql:compile": "node --env-file=.env graphql-codegen.js",
-    "graphql:tsc": "cd ./utils/graphql/generated && tsc --emitDeclarationOnly --declaration ./gql.ts && rimraf ./gql.ts",
-    "graphql:generate": "npm run graphql:compile && npm run graphql:tsc"
+    "format": "prettier --write \"**/*.{js,ts,json,jsx,tsx}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,json,jsx,tsx}\"",
+    "test": "jest --passWithNoTests ./test"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "aio-app-builder-templates": [
     "@adobe/generator-app-events-generic",
