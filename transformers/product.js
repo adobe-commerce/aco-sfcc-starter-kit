@@ -74,6 +74,53 @@ const transformCustomAttributes = attributes => {
 };
 
 /**
+ * Builds a variant reference ID.
+ * @param {string} masterSku - The master SKU
+ * @param {string} variantCode - The variant code
+ * @param {string|number} variantValue - The variant value
+ * @returns {string} The variant reference ID
+ */
+function buildVariantReferenceId (masterSku, variantCode, variantValue) {
+  return `${masterSku}-${variantCode}-${variantValue.toString()}`;
+}
+
+/**
+ * Transforms variationAttributes and masterSku to configurations format
+ * @param {string} masterSku - The master SKU
+ * @param {Array} variationAttributes - The variation attributes array
+ * @returns {Array} Array of configuration objects
+ */
+function transformVariantAttributes(masterSku, variationAttributes) {
+if (!Array.isArray(variationAttributes)) return [];
+  return variationAttributes.map(attr => ({
+    attributeCode: attr.id,
+    label: attr.name,
+    type: 'CONFIGURABLE',
+    values: Array.isArray(attr.values)
+      ? attr.values.map(v => ({
+          variantReferenceId: buildVariantReferenceId(masterSku, attr.id, v.value),
+          label: v.name
+        }))
+      : []
+  }));
+}
+
+/**
+ * Transforms variationValues to ACO attribute format
+ * @param {string} masterSku - The master SKU
+ * @param {Object} variationValues - The variation values object
+ * @returns {Array} Array of ACO attribute objects
+ */
+function transformVariantValues(masterSku, variationValues) {
+  if (!variationValues || typeof variationValues !== 'object') return [];
+  return Object.entries(variationValues).map(([key, value]) => ({
+    code: key,
+    values: [value.toString()],
+    variantReferenceId: buildVariantReferenceId(masterSku, key, value)
+  }));
+}
+
+/**
  * Transforms a Salesforce product to an ACO product.
  *
  * @param {SalesforceProduct} product - The Salesforce product.
@@ -115,11 +162,29 @@ const transformProduct = product => {
       },
       ...transformCustomAttributes(product.customAttributes),
     ],
-    images: transformImages(product.images),
+    images: transformImages(product.images)
     // TODO: Add links
     // TODO: Add configurable product support
     // TODO: Add bundle product support
   };
+
+  //add configurations
+  if (product.type === 'MASTER') {
+    acoProduct.configurations = transformVariantAttributes(product.id, product.variationAttributes);
+  }
+
+  if (product.type === 'VARIANT') {
+    const masterSku = product.master.id;
+    acoProduct.links = [
+      {
+        type: 'variant_of',
+        sku: masterSku
+      }
+    ];
+
+      //attributes
+      acoProduct.attributes.push(...transformVariantValues(masterSku, product.variationValues));
+  }
 
   // @ts-ignore
   return acoProduct;
