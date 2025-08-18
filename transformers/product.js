@@ -163,8 +163,6 @@ const transformProduct = product => {
       ...transformCustomAttributes(product.customAttributes),
     ],
     images: transformImages(product.images)
-    // TODO: Add links
-    // TODO: Add configurable product support
     // TODO: Add bundle product support
   };
 
