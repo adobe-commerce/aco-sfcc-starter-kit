@@ -51,7 +51,15 @@ declare interface SalesforceProduct {
   customAttributes: SalesforceProductCustomAttributes[];
   creationDate: string;
   lastModified: string;
-  type: 'SIMPLE' | 'MASTER' | 'VARIANT' | 'VARIATION_GROUP' | 'BUNDLE' | 'BUNDLED' | 'PRODUCT_SET' | 'PRODUCT_SET_PRODUCT';
+  type:
+    | 'SIMPLE'
+    | 'MASTER'
+    | 'VARIANT'
+    | 'VARIATION_GROUP'
+    | 'BUNDLE'
+    | 'BUNDLED'
+    | 'PRODUCT_SET'
+    | 'PRODUCT_SET_PRODUCT';
   variationAttributes: SalesforceProductVariationAttribute[];
   variants?: SalesforceProductVariant[];
   variationValues?: SalesforceProductVariationValues;

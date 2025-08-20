@@ -141,8 +141,8 @@ const GET_PRODUCT_DETAILS = gql`
         }
       }
       links {
-					...ProductViewLinkFields
-			}
+        ...ProductViewLinkFields
+      }
     }
   }
 

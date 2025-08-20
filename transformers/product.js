@@ -75,23 +75,25 @@ const transformCustomAttributes = attributes => {
 
 /**
  * Builds a variant reference ID.
+ *
  * @param {string} masterSku - The master SKU
  * @param {string} variantCode - The variant code
- * @param {string|number} variantValue - The variant value
+ * @param {string | number} variantValue - The variant value
  * @returns {string} The variant reference ID
  */
-function buildVariantReferenceId (masterSku, variantCode, variantValue) {
+function buildVariantReferenceId(masterSku, variantCode, variantValue) {
   return `${masterSku}-${variantCode}-${variantValue.toString()}`;
 }
 
 /**
  * Transforms variationAttributes and masterSku to configurations format
+ *
  * @param {string} masterSku - The master SKU
  * @param {Array} variationAttributes - The variation attributes array
  * @returns {Array} Array of configuration objects
  */
 function transformVariantAttributes(masterSku, variationAttributes) {
-if (!Array.isArray(variationAttributes)) return [];
+  if (!Array.isArray(variationAttributes)) return [];
   return variationAttributes.map(attr => ({
     attributeCode: attr.id,
     label: attr.name,
@@ -99,16 +101,17 @@ if (!Array.isArray(variationAttributes)) return [];
     values: Array.isArray(attr.values)
       ? attr.values.map(v => ({
           variantReferenceId: buildVariantReferenceId(masterSku, attr.id, v.value),
-          label: v.name
+          label: v.name,
         }))
-      : []
+      : [],
   }));
 }
 
 /**
  * Transforms variationValues to ACO attribute format
+ *
  * @param {string} masterSku - The master SKU
- * @param {Object} variationValues - The variation values object
+ * @param {object} variationValues - The variation values object
  * @returns {Array} Array of ACO attribute objects
  */
 function transformVariantValues(masterSku, variationValues) {
@@ -116,7 +119,7 @@ function transformVariantValues(masterSku, variationValues) {
   return Object.entries(variationValues).map(([key, value]) => ({
     code: key,
     values: [value.toString()],
-    variantReferenceId: buildVariantReferenceId(masterSku, key, value)
+    variantReferenceId: buildVariantReferenceId(masterSku, key, value),
   }));
 }
 
@@ -162,7 +165,7 @@ const transformProduct = product => {
       },
       ...transformCustomAttributes(product.customAttributes),
     ],
-    images: transformImages(product.images)
+    images: transformImages(product.images),
     // TODO: Add bundle product support
   };
 
@@ -176,12 +179,12 @@ const transformProduct = product => {
     acoProduct.links = [
       {
         type: 'variant_of',
-        sku: masterSku
-      }
+        sku: masterSku,
+      },
     ];
 
-      //attributes
-      acoProduct.attributes.push(...transformVariantValues(masterSku, product.variationValues));
+    //attributes
+    acoProduct.attributes.push(...transformVariantValues(masterSku, product.variationValues));
   }
 
   // @ts-ignore
