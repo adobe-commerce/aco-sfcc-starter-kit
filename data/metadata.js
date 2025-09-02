@@ -187,6 +187,98 @@ const getDefaultMetadata = locale => [
     searchWeight: 1,
     searchTypes: [],
   },
+  {
+    code: 'part_category',
+    source: {
+      locale,
+    },
+    label: 'Part Category',
+    dataType: FeedMetadataDataTypeEnum.Text,
+    visibleIn: [
+      FeedMetadataVisibleInEnum.ProductDetail,
+      FeedMetadataVisibleInEnum.ProductListing,
+      FeedMetadataVisibleInEnum.SearchResults,
+      FeedMetadataVisibleInEnum.ProductCompare,
+    ],
+    filterable: true,
+    sortable: true,
+    searchable: true,
+    searchWeight: 1,
+    searchTypes: [
+      FeedMetadataSearchTypesEnum.Autocomplete,
+      FeedMetadataSearchTypesEnum.Contains,
+      FeedMetadataSearchTypesEnum.StartsWith,
+    ],
+  },
+  {
+    code: 'model',
+    source: {
+      locale,
+    },
+    label: 'Model',
+    dataType: FeedMetadataDataTypeEnum.Text,
+    visibleIn: [
+      FeedMetadataVisibleInEnum.ProductDetail,
+      FeedMetadataVisibleInEnum.ProductListing,
+      FeedMetadataVisibleInEnum.SearchResults,
+      FeedMetadataVisibleInEnum.ProductCompare,
+    ],
+    filterable: true,
+    sortable: true,
+    searchable: true,
+    searchWeight: 1,
+    searchTypes: [
+      FeedMetadataSearchTypesEnum.Autocomplete,
+      FeedMetadataSearchTypesEnum.Contains,
+      FeedMetadataSearchTypesEnum.StartsWith,
+    ],
+  },
+  {
+    code: 'model_year',
+    source: {
+      locale,
+    },
+    label: 'Model Year',
+    dataType: FeedMetadataDataTypeEnum.Text,
+    visibleIn: [
+      FeedMetadataVisibleInEnum.ProductDetail,
+      FeedMetadataVisibleInEnum.ProductListing,
+      FeedMetadataVisibleInEnum.SearchResults,
+      FeedMetadataVisibleInEnum.ProductCompare,
+    ],
+    filterable: true,
+    sortable: true,
+    searchable: true,
+    searchWeight: 1,
+    searchTypes: [
+      FeedMetadataSearchTypesEnum.Autocomplete,
+      FeedMetadataSearchTypesEnum.Contains,
+      FeedMetadataSearchTypesEnum.StartsWith,
+    ],
+  },
+  {
+    code: 'country',
+    source: {
+      locale,
+    },
+    label: 'Country',
+    dataType: FeedMetadataDataTypeEnum.Text,
+    visibleIn: [
+      FeedMetadataVisibleInEnum.ProductDetail,
+      FeedMetadataVisibleInEnum.ProductListing,
+      FeedMetadataVisibleInEnum.SearchResults,
+      FeedMetadataVisibleInEnum.ProductCompare,
+    ],
+    filterable: true,
+    sortable: true,
+    searchable: true,
+    searchWeight: 1,
+    searchTypes: [
+      FeedMetadataSearchTypesEnum.Autocomplete,
+      FeedMetadataSearchTypesEnum.Contains,
+      FeedMetadataSearchTypesEnum.StartsWith,
+    ],
+  },
 ];
 
 module.exports = {
