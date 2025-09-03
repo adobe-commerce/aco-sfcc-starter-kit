@@ -34,6 +34,7 @@ application:
           $include: ./actions/inputs.yaml
         actions:
           $include: ./actions/delta/external/actions.config.yaml
+        # Uncomment the following to run the delta-backoffice action on a schedule (ie. every hour)
         # triggers:
         #   everyMin:
         #     feed: /whisk.system/alarms/interval
@@ -61,8 +62,3 @@ application:
           $include: ./actions/inputs.yaml
         actions:
           $include: ./actions/price-book/external/actions.config.yaml
-
-productDependencies:
-  - code: COMMC
-    minVersion: 2.4.4
-    maxVersion: 3.0.0
