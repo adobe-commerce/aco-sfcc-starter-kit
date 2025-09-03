@@ -68,7 +68,7 @@ npm install -g @adobe/aio-cli
 
 ### Deploy and Onboard the Starter Kit
 
-1. Copy the `.env.dist` to a new `.env` file.
+1. Copy the `env.dist` to a new `.env` file.
 2. Run the following commands to connect your starter kit with the App Builder project configured above.
 
    ```sh
@@ -442,7 +442,6 @@ You can generate this file using the command `aio app use`.
 #### Action Dependencies
 
 - You have two options to resolve your actions' dependencies:
-
   1. **Packaged action file**: Add your action's dependencies to the root `package.json` and install them using
      `npm install`. Then set the `function` field in `app.config.yaml` to point to the **entry file** of your action
      folder. We will use `webpack` to package your code and dependencies into a single minified js file. The action will
