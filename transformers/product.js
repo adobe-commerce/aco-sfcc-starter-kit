@@ -182,9 +182,18 @@ const transformProduct = product => {
         sku: masterSku,
       },
     ];
-
     //attributes
     acoProduct.attributes.push(...transformVariantValues(masterSku, product.variationValues));
+  }
+
+  // Add bundle links for all bundles in productBundles
+  if (product.type === 'BUNDLED') {
+    if (Array.isArray(product.productBundles) && product.productBundles.length > 0) {
+      acoProduct.links = product.productBundles.map(bundle => ({
+        type: 'in_bundle',
+        sku: bundle.id,
+      }));
+    }
   }
 
   // @ts-ignore

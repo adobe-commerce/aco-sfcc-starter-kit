@@ -64,6 +64,10 @@ declare interface SalesforceProduct {
   variants?: SalesforceProductVariant[];
   variationValues?: SalesforceProductVariationValues;
   master?: SalesforceProductMaster;
+  productBundles?: Array<{
+    id: string;
+    // ...other bundle fields as needed
+  }>;
 }
 
 declare interface SalesforceProductPrice {
