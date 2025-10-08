@@ -188,10 +188,10 @@ const transformProduct = product => {
 
   // Add bundle links for all bundles in productBundles
   if (product.type === 'BUNDLED') {
-    if (Array.isArray(product.productBundles) && product.productBundles.length > 0) {
-      acoProduct.links = product.productBundles.map(bundle => ({
+    if (Array.isArray(product.bundles) && product.bundles.length > 0) {
+      acoProduct.links = product.bundles.map(bundleSku => ({
         type: 'in_bundle',
-        sku: bundle.id,
+        sku: bundleSku,
       }));
     }
   }
