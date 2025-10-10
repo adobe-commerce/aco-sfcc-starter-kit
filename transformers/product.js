@@ -124,11 +124,28 @@ function transformVariantValues(masterSku, variationValues) {
 }
 
 /**
- * Transforms a Salesforce product to an ACO product.
+ * Builds the bundles array for an ACO parent bundle product.
  *
- * @param {SalesforceProduct} product - The Salesforce product.
- * @returns {import('@adobe-commerce/aco-ts-sdk').FeedProduct} The ACO product.
+ * @param {{ id: string; name: string; quantity: number }[]} bundledProducts - Array of bundled product objects
+ * @returns {object[]} Array of bundle group objects for ACO
  */
+function buildAcoBundles(bundledProducts) {
+  if (!Array.isArray(bundledProducts) || bundledProducts.length === 0) return [];
+  return bundledProducts.map(bp => ({
+    group: bp.name,
+    required: true,
+    multiSelect: false,
+    defaultItemSkus: [bp.id],
+    items: [
+      {
+        sku: bp.id,
+        qty: bp.quantity,
+        userDefinedQty: false,
+      },
+    ],
+  }));
+}
+
 const transformProduct = product => {
   const acoProduct = {
     sku: product.id,
@@ -166,7 +183,6 @@ const transformProduct = product => {
       ...transformCustomAttributes(product.customAttributes),
     ],
     images: transformImages(product.images),
-    // TODO: Add bundle product support
   };
 
   //add configurations
@@ -186,14 +202,17 @@ const transformProduct = product => {
     acoProduct.attributes.push(...transformVariantValues(masterSku, product.variationValues));
   }
 
-  // Add bundle links for all bundles in productBundles
-  if (product.type === 'BUNDLED') {
-    if (Array.isArray(product.bundles) && product.bundles.length > 0) {
-      acoProduct.links = product.bundles.map(bundleSku => ({
-        type: 'in_bundle',
-        sku: bundleSku,
-      }));
-    }
+  // Handle parent bundle product (type BUNDLE) using correct bundles array structure
+  if (product.type === 'BUNDLE' && Array.isArray(product.bundledProducts) && product.bundledProducts.length > 0) {
+    acoProduct.bundles = buildAcoBundles(product.bundledProducts);
+  }
+
+  // Handle bundled products (child) for BUNDLED type
+  if (product.type === 'BUNDLED' && Array.isArray(product.bundles) && product.bundles.length > 0) {
+    acoProduct.links = product.bundles.map(bundleSku => ({
+      type: 'in_bundle',
+      sku: bundleSku,
+    }));
   }
 
   // @ts-ignore
