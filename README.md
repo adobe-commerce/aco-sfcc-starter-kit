@@ -1,7 +1,7 @@
 # ACO SFCC Starter Kit
 
-> [!Important] Installation of the custom ACO SFCC Cartridge is required:
-> [int_adobe_commerce_optimizer](https://github.com/adobe-commerce/aco-sfcc-cartridges).
+> [!Important]
+> Installation of the custom ACO SFCC Cartridge is required: [int_adobe_commerce_optimizer](https://github.com/adobe-commerce/aco-sfcc-cartridges).
 
 ![Starter Kit Flow Diagram](./docs/images/diagram.png)
 
