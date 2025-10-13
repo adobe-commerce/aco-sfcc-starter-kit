@@ -64,6 +64,8 @@ declare interface SalesforceProduct {
   variants?: SalesforceProductVariant[];
   variationValues?: SalesforceProductVariationValues;
   master?: SalesforceProductMaster;
+  bundles?: string[]; // Array of bundled product IDs for BUNDLE type
+  bundledProducts?: BundledProduct[]; // Array of bundled products with details for a parent bundle product
 }
 
 declare interface SalesforceProductPrice {
@@ -163,4 +165,10 @@ declare interface SalesforceProductVariationValues {
 
 declare interface SalesforceProductMaster {
   id: string;
+}
+
+declare interface BundledProduct {
+  id: string;
+  name: string;
+  quantity: number;
 }

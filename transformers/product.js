@@ -81,9 +81,9 @@ const transformCustomAttributes = attributes => {
  * @param {string | number} variantValue - The variant value
  * @returns {string} The variant reference ID
  */
-function buildVariantReferenceId(masterSku, variantCode, variantValue) {
+const buildVariantReferenceId = (masterSku, variantCode, variantValue) => {
   return `${masterSku}-${variantCode}-${variantValue.toString()}`;
-}
+};
 
 /**
  * Transforms variationAttributes and masterSku to configurations format
@@ -92,7 +92,7 @@ function buildVariantReferenceId(masterSku, variantCode, variantValue) {
  * @param {Array} variationAttributes - The variation attributes array
  * @returns {Array} Array of configuration objects
  */
-function transformVariantAttributes(masterSku, variationAttributes) {
+const transformVariantAttributes = (masterSku, variationAttributes) => {
   if (!Array.isArray(variationAttributes)) return [];
   return variationAttributes.map(attr => ({
     attributeCode: attr.id,
@@ -105,7 +105,7 @@ function transformVariantAttributes(masterSku, variationAttributes) {
         }))
       : [],
   }));
-}
+};
 
 /**
  * Transforms variationValues to ACO attribute format
@@ -114,14 +114,37 @@ function transformVariantAttributes(masterSku, variationAttributes) {
  * @param {object} variationValues - The variation values object
  * @returns {Array} Array of ACO attribute objects
  */
-function transformVariantValues(masterSku, variationValues) {
+const transformVariantValues = (masterSku, variationValues) => {
   if (!variationValues || typeof variationValues !== 'object') return [];
   return Object.entries(variationValues).map(([key, value]) => ({
     code: key,
     values: [value.toString()],
     variantReferenceId: buildVariantReferenceId(masterSku, key, value),
   }));
-}
+};
+
+/**
+ * Builds the bundles array for an ACO parent bundle product.
+ *
+ * @param {{ id: string; name: string; quantity: number }[]} bundledProducts - Array of bundled product objects
+ * @returns {object[]} Array of bundle group objects for ACO
+ */
+const buildAcoBundles = bundledProducts => {
+  if (!Array.isArray(bundledProducts) || bundledProducts.length === 0) return [];
+  return bundledProducts.map(bp => ({
+    group: bp.name,
+    required: true,
+    multiSelect: false,
+    defaultItemSkus: [bp.id],
+    items: [
+      {
+        sku: bp.id,
+        qty: bp.quantity,
+        userDefinedQty: false,
+      },
+    ],
+  }));
+};
 
 /**
  * Transforms a Salesforce product to an ACO product.
@@ -166,7 +189,6 @@ const transformProduct = product => {
       ...transformCustomAttributes(product.customAttributes),
     ],
     images: transformImages(product.images),
-    // TODO: Add bundle product support
   };
 
   //add configurations
@@ -182,9 +204,21 @@ const transformProduct = product => {
         sku: masterSku,
       },
     ];
-
     //attributes
     acoProduct.attributes.push(...transformVariantValues(masterSku, product.variationValues));
+  }
+
+  // Handle parent bundle product (type BUNDLE) using correct bundles array structure
+  if (product.type === 'BUNDLE' && product.bundledProducts?.length) {
+    acoProduct.bundles = buildAcoBundles(product.bundledProducts);
+  }
+
+  // Handle bundled products (child) for BUNDLED type
+  if (product.type === 'BUNDLE' && product.bundles?.length) {
+    acoProduct.links = product.bundles.map(bundleSku => ({
+      type: 'in_bundle',
+      sku: bundleSku,
+    }));
   }
 
   // @ts-ignore
