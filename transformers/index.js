@@ -11,6 +11,7 @@
 */
 
 module.exports = {
+  ...require('./category'),
   ...require('./priceBook'),
   ...require('./product'),
   ...require('./price'),

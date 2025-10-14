@@ -12,7 +12,9 @@
 
 module.exports = {
   ...require('./aco'),
+  ...require('./categories'),
   ...require('./delta'),
+  ...require('./helpers'),
   ...require('./metadata'),
   ...require('./priceBooks'),
   ...require('./prices'),

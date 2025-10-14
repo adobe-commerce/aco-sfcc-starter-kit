@@ -1,7 +1,7 @@
 # ACO SFCC Starter Kit
 
-> [!Important]
-> Installation of the custom ACO SFCC Cartridge is required: [int_adobe_commerce_optimizer](https://github.com/adobe-commerce/aco-sfcc-cartridges).
+> [!Important] Installation of the custom ACO SFCC Cartridge is required:
+> [int_adobe_commerce_optimizer](https://github.com/adobe-commerce/aco-sfcc-cartridges).
 
 ![Starter Kit Flow Diagram](./docs/images/diagram.png)
 
@@ -131,6 +131,8 @@ Run the following command to deploy your starter kit to your Developer Console p
 aio app deploy
 ```
 
+> [!TIP] Run the `aio app deploy` command with `--force-build --force-deploy` flags to force a clean build.
+
 #### Onboard Your Starter Kit Actions
 
 Run the following command to onboard the App Builder actions from your starter kit to your Developer Console project:
@@ -168,6 +170,7 @@ Entities Syncronized:
 
 - Metadata
 - Products
+- Categories
 - Price Books
 - Prices
 
@@ -184,12 +187,13 @@ Location: `actions/delta`
 Entities Syncronized:
 
 - Products
+- Categories
 - Price Books
 - Prices
 
 #### Price Book Sync
 
-This action retrieves all price books in SFCC and syncronized them with Commerce Optimizer.
+This action retrieves all price books in SFCC and syncronizes them with Commerce Optimizer.
 
 Location: `actions/price-book`
 
@@ -203,6 +207,21 @@ This action reads all metadata defined in the [data/metadata.js](./data/metadata
 Commerce Optimizer for each locale configured in the `SFCC_LOCALES_TO_SYNC` environment variable.
 
 Location: `actions/metadata`
+
+#### Categories Sync
+
+This action retrieves all categories in SFCC and syncronizes them with Commerce Optimizer.
+
+Location: `actions/price-book`
+
+Entities Syncronized:
+
+- Categories
+
+> [!NOTE] Only letters and numbers allowed in ACO category slugs.
+
+While syncronizing, the SFCC category ids are sanitized to remove special characters. Example:
+`parent_cat/child_cat_1/child_cat_2/child_cat_3` becomes `parentcat/childcat1/childcat2/childcat3`
 
 #### Specific Products Sync
 
@@ -345,6 +364,14 @@ The `lastPriceBookSyncRun` key tracks the last time a price book sync was succes
 The `lastMetadataSyncRun` key tracks the last time a metadata sync was successfully finished.
 
 - Key: `lastMetadataSyncRun`
+- Example Value: `2025-07-24T00:13:45.341Z`
+- Type: ISO 8601 String
+
+#### Last Categories Sync Run
+
+The `lastCategorySyncRun` key tracks the last time a category sync was successfully finished.
+
+- Key: `lastCategorySyncRun`
 - Example Value: `2025-07-24T00:13:45.341Z`
 - Type: ISO 8601 String
 

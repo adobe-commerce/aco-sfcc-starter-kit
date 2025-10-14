@@ -46,11 +46,10 @@ declare interface SalesforceProduct {
   searchable: boolean;
   searchableFlag: boolean;
   inStock: boolean;
+  categories: SalesforceCategory[];
   prices: SalesforceProductPrice[];
   images: SalesforceProductImage[];
   customAttributes: SalesforceProductCustomAttributes[];
-  creationDate: string;
-  lastModified: string;
   type:
     | 'SIMPLE'
     | 'MASTER'
@@ -66,6 +65,8 @@ declare interface SalesforceProduct {
   master?: SalesforceProductMaster;
   bundles?: string[]; // Array of bundled product IDs for BUNDLE type
   bundledProducts?: BundledProduct[]; // Array of bundled products with details for a parent bundle product
+  creationDate: string;
+  lastModified: string;
 }
 
 declare interface SalesforceProductPrice {
@@ -171,4 +172,29 @@ declare interface BundledProduct {
   id: string;
   name: string;
   quantity: number;
+}
+
+declare interface SalesforceCategory {
+  id: string;
+  name: SalesforceLocalizedName;
+  parentCategoryId: string;
+  catalogId: string;
+  paths: SalesforceCategoryPath[];
+}
+
+declare interface SalesforceLocalizedName {
+  default: string;
+  [locale: string]: string;
+}
+
+declare interface SalesforceCategoryPath {
+  id: string;
+  name: SalesforceLocalizedName;
+}
+
+declare interface SalesforceCategoryResponse {
+  limit: number;
+  offset: number;
+  total: number;
+  data: SalesforceCategory[];
 }

@@ -35,15 +35,15 @@ application:
         actions:
           $include: ./actions/delta/external/actions.config.yaml
         # Uncomment the following to run the delta-backoffice action on a schedule (ie. every hour)
-        # triggers:
-        #   everyMin:
-        #     feed: /whisk.system/alarms/interval
-        #     inputs:
-        #       minutes: 60
-        # rules:
-        #   everyMinRule:
-        #     trigger: everyMin
-        #     action: delta-backoffice/consumer
+        triggers:
+          everyMin:
+            feed: /whisk.system/alarms/interval
+            inputs:
+              minutes: 60
+        rules:
+          everyMinRule:
+            trigger: everyMin
+            action: delta-backoffice/consumer
       metadata-backoffice:
         license: Apache-2.0
         inputs:
@@ -62,3 +62,9 @@ application:
           $include: ./actions/inputs.yaml
         actions:
           $include: ./actions/price-book/external/actions.config.yaml
+      category-backoffice:
+        license: Apache-2.0
+        inputs:
+          $include: ./actions/inputs.yaml
+        actions:
+          $include: ./actions/category/external/actions.config.yaml

@@ -24,29 +24,12 @@ const {
   configureAcoClient,
   configureSalesforceApiOptions,
   createSalesforceAdminHttpClient,
-  getSalesforceSiteCatalogId,
+  getSiteCatalogId,
   syncAllMetadata,
   syncAllPriceBooks,
   syncAllProducts,
+  syncAllCategories,
 } = require('../../../../api');
-
-const getSiteCatalogId = async (salesforceClient, salesforceOrgId, siteId, logger) => {
-  logger.debug(`Retrieving catalog id for site ${siteId} from Salesforce`);
-  const res = await getSalesforceSiteCatalogId(salesforceClient, salesforceOrgId, siteId);
-  if (!res.ok) {
-    if (res.status === 404) {
-      logger.error(`No catalog id is assigned to SFCC siteId: ${siteId}`);
-    } else {
-      logger.error(`Failed to retrieve catalog id from Salesforce: ${res.status} ${res.statusText}`);
-    }
-    throw new StarterKitActionError('Failed to retrieve catalog id from Salesforce', res.status, res.statusText);
-  }
-  /** @type {SalesforceSiteCatalogResponse} */
-  const data = await res.json();
-  const catalogId = data.id;
-  logger.debug(`Using catalog id ${catalogId} for site ${siteId}`);
-  return catalogId;
-};
 
 const fullSyncSite = async (params, logger) => {
   /** @type {SalesforceApiOptions} */
@@ -65,6 +48,15 @@ const fullSyncSite = async (params, logger) => {
     acoClientOptions,
     params.SFCC_ORGANIZATION_ID,
     params.SFCC_SITE_ID,
+    logger,
+  );
+
+  await syncAllCategories(
+    salesforceApiOptions,
+    acoClientOptions,
+    params.SFCC_ORGANIZATION_ID,
+    params.SFCC_SITE_ID,
+    localesToSync,
     logger,
   );
 

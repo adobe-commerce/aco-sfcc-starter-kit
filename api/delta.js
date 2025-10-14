@@ -14,8 +14,10 @@
 const { Core } = require('@adobe/aio-sdk');
 const stateLib = require('@adobe/aio-lib-state');
 const { createAcoClient } = require('./aco');
+const { getSiteCatalogId } = require('./helpers');
 const {
   createSalesforceAdminHttpClient,
+  getSalesforceCategoryById,
   getSalesforcePriceBookById,
   getSalesforceProductByIds,
   getSalesforceTrackedChanges,
@@ -23,6 +25,7 @@ const {
 const { syncPriceBooksBatch, deletePriceBooks } = require('./priceBooks');
 const { syncPricesFromProducts, deletePrices } = require('./prices');
 const { syncProductsBatch, deleteProducts } = require('./products');
+const { syncCategoriesBatch, deleteCategories } = require('./categories');
 const { AIO_STATE_MAX_TTL, AIO_STATE_KEY_LAST_SYNC } = require('../actions/constants');
 const { StarterKitActionError } = require('../actions/responses');
 
@@ -58,6 +61,7 @@ const syncAllChanges = async (
   logger.debug(`Retrieving tracked changes from Salesforce`);
   const salesforceClient = await createSalesforceAdminHttpClient(salesforceApiOptions);
   const acoClient = createAcoClient(acoClientOptions);
+  const catalogId = await getSiteCatalogId(salesforceClient, salesforceOrgId, siteId, logger);
 
   let totalChanges = 0;
   let offset = 0;
@@ -98,9 +102,10 @@ const syncAllChanges = async (
         salesforceClient,
         salesforceOrgId,
         siteId,
+        catalogId,
         locales,
-        logger,
         data.data,
+        logger,
       );
 
       Object.keys(acceptedByType).forEach(type => {
@@ -128,13 +133,23 @@ const syncAllChanges = async (
  * @param {import('ky').KyInstance} salesforceClient - The Salesforce HTTP client
  * @param {string} salesforceOrgId - The Salesforce organization ID
  * @param {string} siteId - The Salesforce site ID
+ * @param {string} catalogId - The Salesforce catalog ID
  * @param {string[]} locales - The locales to sync
- * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @param {SalesforceTrackedChanges[]} changes - The tracked changes from Salesforce
+ * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @returns {Promise<{ product: number; priceBook: number; price: number }>} The number of items accepted by ACO by type
  * @throws {StarterKitActionError} If there's an error syncing the changes
  */
-const syncChangesBatch = async (acoClient, salesforceClient, salesforceOrgId, siteId, locales, logger, changes) => {
+const syncChangesBatch = async (
+  acoClient,
+  salesforceClient,
+  salesforceOrgId,
+  siteId,
+  catalogId,
+  locales,
+  changes,
+  logger,
+) => {
   logger.debug(`Executing batch sync for ${changes.length} changes.`);
 
   const acceptedByType = { product: 0, priceBook: 0, price: 0 };
@@ -162,8 +177,8 @@ const syncChangesBatch = async (acoClient, salesforceClient, salesforceOrgId, si
             salesforceOrgId,
             siteId,
             locale,
-            logger,
             typeChanges,
+            logger,
           );
           acceptedByType.product += accepted;
         }
@@ -174,8 +189,8 @@ const syncChangesBatch = async (acoClient, salesforceClient, salesforceOrgId, si
           salesforceClient,
           salesforceOrgId,
           siteId,
-          logger,
           typeChanges,
+          logger,
         );
         break;
       case 'price':
@@ -185,8 +200,19 @@ const syncChangesBatch = async (acoClient, salesforceClient, salesforceOrgId, si
           salesforceOrgId,
           siteId,
           locales[0], // The price is the same for all locales
-          logger,
           typeChanges,
+          logger,
+        );
+        break;
+      case 'category':
+        acceptedByType.category = await syncCategoryChanges(
+          acoClient,
+          salesforceClient,
+          salesforceOrgId,
+          catalogId,
+          locales,
+          typeChanges,
+          logger,
         );
         break;
       default:
@@ -208,12 +234,12 @@ const syncChangesBatch = async (acoClient, salesforceClient, salesforceOrgId, si
  * @param {string} salesforceOrgId - The Salesforce organization ID
  * @param {string} siteId - The Salesforce site ID
  * @param {string} locale - The locale to sync
- * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @param {SalesforceTrackedChanges[]} changes - The product changes from Salesforce
+ * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @returns {Promise<number>} The number of products accepted by ACO
  * @throws {StarterKitActionError} If there's an error syncing the changes
  */
-const syncProductChanges = async (acoClient, salesforceClient, salesforceOrgId, siteId, locale, logger, changes) => {
+const syncProductChanges = async (acoClient, salesforceClient, salesforceOrgId, siteId, locale, changes, logger) => {
   logger.debug(`[${locale}] Processing ${changes.length} product changes`);
 
   const productIdsToSync = changes.filter(change => !change.isDeleted).map(change => change.entityId);
@@ -250,12 +276,12 @@ const syncProductChanges = async (acoClient, salesforceClient, salesforceOrgId, 
  * @param {import('ky').KyInstance} salesforceClient - The Salesforce HTTP client
  * @param {string} salesforceOrgId - The Salesforce organization ID
  * @param {string} siteId - The Salesforce site ID
- * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @param {SalesforceTrackedChanges[]} changes - The price book changes from Salesforce
+ * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @returns {Promise<number>} The number of price books accepted by ACO
  * @throws {StarterKitActionError} If there's an error fetching or syncing the price book
  */
-const syncPriceBookChanges = async (acoClient, salesforceClient, salesforceOrgId, siteId, logger, changes) => {
+const syncPriceBookChanges = async (acoClient, salesforceClient, salesforceOrgId, siteId, changes, logger) => {
   logger.debug(`Processing ${changes.length} price book changes`);
   const salesforcePriceBooks = [];
   const priceBooksToDelete = [];
@@ -306,12 +332,12 @@ const syncPriceBookChanges = async (acoClient, salesforceClient, salesforceOrgId
  * @param {string} salesforceOrgId - The Salesforce organization ID
  * @param {string} siteId - The Salesforce site ID
  * @param {string} locale - The locale to sync. This can be any valid locale, as the price is the same for all locales.
- * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @param {SalesforceTrackedChanges[]} changes - The price changes from Salesforce
+ * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
  * @returns {Promise<number>} The number of prices accepted by ACO
  * @throws {StarterKitActionError} If there's an error syncing the changes
  */
-const syncPriceChanges = async (acoClient, salesforceClient, salesforceOrgId, siteId, locale, logger, changes) => {
+const syncPriceChanges = async (acoClient, salesforceClient, salesforceOrgId, siteId, locale, changes, logger) => {
   logger.debug(`Processing ${changes.length} price changes`);
 
   const productIdsToSync = changes.filter(change => !change.isDeleted).map(change => change.entityId);
@@ -347,6 +373,80 @@ const syncPriceChanges = async (acoClient, salesforceClient, salesforceOrgId, si
 
   if (pricesToDelete.length > 0) {
     totalAccepted += await deletePrices(acoClient, pricesToDelete, logger);
+  }
+
+  return totalAccepted;
+};
+
+/**
+ * Syncs category changes by fetching categories and processing them.
+ *
+ * @param {import('@adobe-commerce/aco-ts-sdk').Client} acoClient - The ACO client
+ * @param {import('ky').KyInstance} salesforceClient - The Salesforce HTTP client
+ * @param {string} salesforceOrgId - The Salesforce organization ID
+ * @param {string} catalogId - The Salesforce catalog ID
+ * @param {string[]} locales - The locales to sync
+ * @param {SalesforceTrackedChanges[]} changes - The category changes from Salesforce
+ * @param {ReturnType<typeof Core.Logger>} logger - The logger instance
+ * @returns {Promise<number>} The number of categories accepted by ACO
+ * @throws {StarterKitActionError} If there's an error syncing the changes
+ */
+const syncCategoryChanges = async (
+  acoClient,
+  salesforceClient,
+  salesforceOrgId,
+  catalogId,
+  locales,
+  changes,
+  logger,
+) => {
+  logger.debug(`Processing ${changes.length} category changes`);
+  const salesforceCategories = [];
+  const categoriesToDelete = [];
+
+  let totalAccepted = 0;
+  for (const change of changes) {
+    try {
+      const res = await getSalesforceCategoryById(salesforceClient, salesforceOrgId, catalogId, change.entityId);
+      logger.debug(`Status: ${res.status}`);
+      if (!res.ok) {
+        logger.error(`Failed to fetch category ${change.entityId}: ${res.status} ${res.statusText}`);
+        throw new StarterKitActionError('Failed to fetch category', res.status, res.statusText);
+      }
+
+      /** @type {SalesforceCategory} */
+      const categoryData = await res.json();
+      salesforceCategories.push(categoryData);
+    } catch (error) {
+      // Handle 404 errors (category was deleted)
+      if (error.response && error.response.status === 404) {
+        logger.warn(`Category ${change.entityId} not found: also deleting from ACO`);
+        categoriesToDelete.push(change.entityId);
+        continue;
+      }
+      // Re-throw other errors
+      throw error;
+    }
+  }
+
+  // Sync categories in batches of ACO_BATCH_SIZE for each locale
+  for (let i = 0; i < salesforceCategories.length; i += ACO_BATCH_SIZE) {
+    const categoryBatch = salesforceCategories.slice(i, i + ACO_BATCH_SIZE);
+    for (const locale of locales) {
+      const accepted = await syncCategoriesBatch(acoClient, categoryBatch, locale, logger);
+      totalAccepted += accepted;
+    }
+  }
+
+  // Delete categories in batches of ACO_BATCH_SIZE for each locale
+  if (categoriesToDelete.length > 0) {
+    for (let i = 0; i < categoriesToDelete.length; i += ACO_BATCH_SIZE) {
+      const deletionBatch = categoriesToDelete.slice(i, i + ACO_BATCH_SIZE);
+      for (const locale of locales) {
+        const deleted = await deleteCategories(acoClient, deletionBatch, locale, logger);
+        totalAccepted += deleted;
+      }
+    }
   }
 
   return totalAccepted;

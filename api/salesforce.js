@@ -11,7 +11,7 @@
 */
 
 const getScopes = (realmId, instanceId) =>
-  `SALESFORCE_COMMERCE_API:${realmId}_${instanceId} sfcc.products sfcc.products.rw c_aco`;
+  `SALESFORCE_COMMERCE_API:${realmId}_${instanceId} sfcc.catalogs sfcc.products c_aco`;
 
 /**
  * Configures the Salesforce API options from environment parameters.
@@ -160,6 +160,40 @@ const getSalesforcePriceBookById = async (client, organizationId, siteId, priceB
 };
 
 /**
+ * Get categories from Salesforce.
+ *
+ * @param {import('ky').KyInstance} client - The Salesforce HTTP client.
+ * @param {string} organizationId - The Salesforce organization ID.
+ * @param {string} catalogId - The Salesforce catalog ID.
+ * @param {number} limit - The response page size. Max 1000.
+ * @param {number} offset - The response page offset for pagination.
+ * @returns {Promise<import('ky').KyResponse>} The response from the Salesforce API.
+ */
+const getSalesforceCategories = async (client, organizationId, catalogId, limit, offset) => {
+  return await client.get(`product/catalogs/v1/organizations/${organizationId}/catalogs/${catalogId}/categories`, {
+    searchParams: {
+      limit,
+      offset,
+    },
+  });
+};
+
+/**
+ * Get category by ID from Salesforce.
+ *
+ * @param {import('ky').KyInstance} client - The Salesforce HTTP client.
+ * @param {string} organizationId - The Salesforce organization ID.
+ * @param {string} catalogId - The Salesforce catalog ID.
+ * @param {string} categoryId - The Salesforce category ID.
+ * @returns {Promise<import('ky').KyResponse>} The response from the Salesforce API.
+ */
+const getSalesforceCategoryById = async (client, organizationId, catalogId, categoryId) => {
+  return await client.get(
+    `product/catalogs/v1/organizations/${organizationId}/catalogs/${catalogId}/categories/${categoryId}`,
+  );
+};
+
+/**
  * Get product by list of IDs from Salesforce via our custom endpoint.
  *
  * @param {import('ky').KyInstance} client - The Salesforce HTTP client.
@@ -238,6 +272,8 @@ module.exports = {
   createSalesforceAdminHttpClient,
   getSalesforcePriceBooks,
   getSalesforcePriceBookById,
+  getSalesforceCategories,
+  getSalesforceCategoryById,
   getSalesforceProductByIds,
   getSalesforceSiteCatalogId,
   getSalesforceTrackedChanges,
