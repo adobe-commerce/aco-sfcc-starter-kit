@@ -179,8 +179,28 @@ Entities Syncronized:
 This action retrieves recent changes that have been made in SFCC since the last full or delta sync action and
 synchonizes them with Commerce Optimizer.
 
-By default, this action is scheduled to run every hour via the
+By default, this action is scheduled to run every hour (`cron: 15 * * * *`) at 15 minutes past the hour using the
 [App Builder Cron](https://developer.adobe.com/app-builder/docs/resources/cron-jobs/lesson2) action configuration.
+Please adjust this schedule to align with the
+[SFCC job configuration](https://github.com/adobe-commerce/aco-sfcc-cartridges#configure-the-adobecommerceoptimizertrackedchanges-job)
+and to best fit your catalog data update frequency in the [App Configuration File](./app.config.yaml).
+
+Example:
+
+```yaml
+triggers:
+  everyHour:
+  feed: /whisk.system/alarms/alarm
+  inputs:
+    cron: 15 * * * *
+    trigger_payload:
+      type: sfcc.delta.sync
+      data: {}
+rules:
+  everyHourRule:
+  trigger: everyHour
+  action: delta-backoffice/consumer
+```
 
 Location: `actions/delta`
 
@@ -212,7 +232,7 @@ Location: `actions/metadata`
 
 This action retrieves all categories in SFCC and syncronizes them with Commerce Optimizer.
 
-Location: `actions/price-book`
+Location: `actions/category`
 
 Entities Syncronized:
 

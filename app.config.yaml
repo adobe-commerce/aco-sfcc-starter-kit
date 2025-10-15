@@ -34,19 +34,21 @@ application:
           $include: ./actions/inputs.yaml
         actions:
           $include: ./actions/delta/external/actions.config.yaml
-        # Uncomment the following to run the delta-backoffice action on a schedule (ie. every hour)
+        # The following configures the delta-backoffice action
+        # to run on a cron schedule (ie. every hour at :15 minutes).
+        # Adjust this schedule as needed.
         triggers:
-          everyMin:
-            feed: /whisk.system/alarms/interval
+          everyHour:
+            feed: /whisk.system/alarms/alarm
             inputs:
-              minutes: 60
+              cron: 15 * * * *
+              trigger_payload:
+                type: sfcc.delta.sync
+                data: {}
         rules:
-          everyMinRule:
-            trigger: everyMin
+          everyHourRule:
+            trigger: everyHour
             action: delta-backoffice/consumer
-            inputs:
-              type: sfcc.delta.sync
-              data: {}
       metadata-backoffice:
         license: Apache-2.0
         inputs:
