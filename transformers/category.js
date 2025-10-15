@@ -27,7 +27,7 @@ const transformCategories = (categories, locale) => {
     // Skip the first element in the paths array (catalog ID) and join the remaining path IDs with "/"
     const slug = category.paths
       .slice(1)
-      .map(path => path.id.replace(/[^a-zA-Z0-9]/g, ''))
+      .map(path => path.id.replace(/[^a-zA-Z0-9-]/g, ''))
       .join('/');
 
     const name = category.name?.[locale] || category.name?.default || category.id;

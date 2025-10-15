@@ -44,6 +44,9 @@ application:
           everyMinRule:
             trigger: everyMin
             action: delta-backoffice/consumer
+            inputs:
+              type: sfcc.delta.sync
+              data: {}
       metadata-backoffice:
         license: Apache-2.0
         inputs:

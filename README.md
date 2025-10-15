@@ -218,7 +218,7 @@ Entities Syncronized:
 
 - Categories
 
-> [!NOTE] Only letters and numbers allowed in ACO category slugs.
+> [!NOTE] Only letters, numbers, and hyphens are allowed in ACO category slugs.
 
 While syncronizing, the SFCC category ids are sanitized to remove special characters. Example:
 `parent_cat/child_cat_1/child_cat_2/child_cat_3` becomes `parentcat/childcat1/childcat2/childcat3`

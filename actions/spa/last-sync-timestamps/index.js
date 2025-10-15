@@ -14,6 +14,7 @@ const { Core } = require('@adobe/aio-sdk');
 const stateLib = require('@adobe/aio-lib-state');
 const {
   AIO_STATE_KEY_LAST_FULL_SYNC_RUN,
+  AIO_STATE_KEY_LAST_CATEGORY_SYNC_RUN,
   AIO_STATE_KEY_LAST_DELTA_SYNC_RUN,
   AIO_STATE_KEY_LAST_PRICE_BOOK_SYNC_RUN,
   AIO_STATE_KEY_LAST_METADATA_SYNC_RUN,
@@ -35,6 +36,7 @@ const main = async params => {
     const lastDeltaSyncRun = await state.get(AIO_STATE_KEY_LAST_DELTA_SYNC_RUN);
     const lastPriceBookSyncRun = await state.get(AIO_STATE_KEY_LAST_PRICE_BOOK_SYNC_RUN);
     const lastMetadataSyncRun = await state.get(AIO_STATE_KEY_LAST_METADATA_SYNC_RUN);
+    const lastCategorySyncRun = await state.get(AIO_STATE_KEY_LAST_CATEGORY_SYNC_RUN);
     const lastSpecificProductsSyncRun = await state.get(AIO_STATE_KEY_LAST_SPECIFIC_PRODUCTS_SYNC_RUN);
 
     const lastSyncTimestamps = {
@@ -42,6 +44,7 @@ const main = async params => {
       lastDeltaSyncRun: lastDeltaSyncRun?.value,
       lastPriceBookSyncRun: lastPriceBookSyncRun?.value,
       lastMetadataSyncRun: lastMetadataSyncRun?.value,
+      lastCategorySyncRun: lastCategorySyncRun?.value,
       lastSpecificProductsSyncRun: lastSpecificProductsSyncRun?.value,
     };
     return actionSuccessResponse('Last sync timestamps retrieved successfully', {
