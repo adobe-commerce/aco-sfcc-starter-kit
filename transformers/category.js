@@ -38,7 +38,7 @@ const transformCategories = (categories, locale) => {
         locale,
       },
       name,
-      families: [],
+      families: ['all'],
     });
   });
   return acoCategories;
