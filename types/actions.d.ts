@@ -41,6 +41,19 @@ namespace PriceBookActions {
   };
 }
 
+namespace CategoryActions {
+  /** The specific environment parameters received by the `category/external/sync` action. */
+  declare interface SyncEnv extends GlobalEnv {
+    data: {};
+  }
+
+  /** The specific environment parameters received by the `category/external/consumer` action. */
+  declare type ConsumerEnv = GlobalEnv & {
+    type: 'sfcc.category.sync';
+    data: {};
+  };
+}
+
 namespace FullSyncActions {
   /** The specific environment parameters received by the `full-sync/external/sync` action. */
   declare interface SyncEnv extends GlobalEnv {

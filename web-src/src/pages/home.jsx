@@ -21,6 +21,7 @@ import { PdpApiCard } from '../components/pdp-api-card';
 import { SyncPredefinedMetadataCard } from '../components/sync-predefined-metadata-card';
 import { SyncSpecificProductsCard } from '../components/sync-specific-products-card';
 import { SyncPriceBooksCard } from '../components/sync-price-books-card';
+import { SyncCategoriesCard } from '../components/sync-categories-card';
 import { SiteContextCard } from '../components/site-context';
 import { DeltaSyncCard } from '../components/delta-sync-card';
 import { useWebAction } from '../hooks/use-web-action';
@@ -66,6 +67,7 @@ export function Home() {
               <DeltaSyncCard lastSync={lastSyncTimestamps.lastDeltaSyncRun} />
               <SyncPredefinedMetadataCard lastSync={lastSyncTimestamps.lastMetadataSyncRun} />
               <SyncPriceBooksCard lastSync={lastSyncTimestamps.lastPriceBookSyncRun} />
+              <SyncCategoriesCard lastSync={lastSyncTimestamps.lastCategorySyncRun} />
               <SyncSpecificProductsCard lastSync={lastSyncTimestamps.lastSpecificProductsSyncRun} />
             </Grid>
           </View>

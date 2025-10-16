@@ -45,5 +45,14 @@
         }
       }
     }
+  },
+  "category": {
+    "backoffice": {
+      "sfcc.category.sync": {
+        "sampleEventTemplate": {
+          "data": {}
+        }
+      }
+    }
   }
 }

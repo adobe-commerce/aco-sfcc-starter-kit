@@ -1,7 +1,7 @@
 # ACO SFCC Starter Kit
 
-> [!Important]
-> Installation of the custom ACO SFCC Cartridge is required: [int_adobe_commerce_optimizer](https://github.com/adobe-commerce/aco-sfcc-cartridges).
+> [!Important] Installation of the custom ACO SFCC Cartridge is required:
+> [int_adobe_commerce_optimizer](https://github.com/adobe-commerce/aco-sfcc-cartridges).
 
 ![Starter Kit Flow Diagram](./docs/images/diagram.png)
 
@@ -131,6 +131,8 @@ Run the following command to deploy your starter kit to your Developer Console p
 aio app deploy
 ```
 
+> [!TIP] Run the `aio app deploy` command with `--force-build --force-deploy` flags to force a clean build.
+
 #### Onboard Your Starter Kit Actions
 
 Run the following command to onboard the App Builder actions from your starter kit to your Developer Console project:
@@ -168,6 +170,7 @@ Entities Syncronized:
 
 - Metadata
 - Products
+- Categories
 - Price Books
 - Prices
 
@@ -176,20 +179,41 @@ Entities Syncronized:
 This action retrieves recent changes that have been made in SFCC since the last full or delta sync action and
 synchonizes them with Commerce Optimizer.
 
-By default, this action is scheduled to run every hour via the
+By default, this action is scheduled to run every hour (`cron: 15 * * * *`) at 15 minutes past the hour using the
 [App Builder Cron](https://developer.adobe.com/app-builder/docs/resources/cron-jobs/lesson2) action configuration.
+Please adjust this schedule to align with the
+[SFCC job configuration](https://github.com/adobe-commerce/aco-sfcc-cartridges#configure-the-adobecommerceoptimizertrackedchanges-job)
+and to best fit your catalog data update frequency in the [App Configuration File](./app.config.yaml).
+
+Example:
+
+```yaml
+triggers:
+  everyHour:
+  feed: /whisk.system/alarms/alarm
+  inputs:
+    cron: 15 * * * *
+    trigger_payload:
+      type: sfcc.delta.sync
+      data: {}
+rules:
+  everyHourRule:
+  trigger: everyHour
+  action: delta-backoffice/consumer
+```
 
 Location: `actions/delta`
 
 Entities Syncronized:
 
 - Products
+- Categories
 - Price Books
 - Prices
 
 #### Price Book Sync
 
-This action retrieves all price books in SFCC and syncronized them with Commerce Optimizer.
+This action retrieves all price books in SFCC and syncronizes them with Commerce Optimizer.
 
 Location: `actions/price-book`
 
@@ -203,6 +227,21 @@ This action reads all metadata defined in the [data/metadata.js](./data/metadata
 Commerce Optimizer for each locale configured in the `SFCC_LOCALES_TO_SYNC` environment variable.
 
 Location: `actions/metadata`
+
+#### Categories Sync
+
+This action retrieves all categories in SFCC and syncronizes them with Commerce Optimizer.
+
+Location: `actions/category`
+
+Entities Syncronized:
+
+- Categories
+
+> [!NOTE] Only letters, numbers, and hyphens are allowed in ACO category slugs.
+
+While syncronizing, the SFCC category ids are sanitized to remove special characters. Example:
+`parent_cat/child_cat_1/child_cat_2/child_cat_3` becomes `parentcat/childcat1/childcat2/childcat3`
 
 #### Specific Products Sync
 
@@ -345,6 +384,14 @@ The `lastPriceBookSyncRun` key tracks the last time a price book sync was succes
 The `lastMetadataSyncRun` key tracks the last time a metadata sync was successfully finished.
 
 - Key: `lastMetadataSyncRun`
+- Example Value: `2025-07-24T00:13:45.341Z`
+- Type: ISO 8601 String
+
+#### Last Categories Sync Run
+
+The `lastCategorySyncRun` key tracks the last time a category sync was successfully finished.
+
+- Key: `lastCategorySyncRun`
 - Example Value: `2025-07-24T00:13:45.341Z`
 - Type: ISO 8601 String
 

@@ -147,6 +147,48 @@ const buildAcoBundles = bundledProducts => {
 };
 
 /**
+ * Builds hierarchical category paths from parent-child relationships.
+ *
+ * @param {SalesforceCategory[]} categories - Array of category objects
+ * @returns {object[]} Array of route objects with hierarchical paths
+ */
+const transformCategoryRoutes = categories => {
+  if (!Array.isArray(categories) || categories.length === 0) return [];
+
+  const categoryMap = new Map();
+  categories.forEach(category => {
+    categoryMap.set(category.id, category);
+  });
+
+  const buildPath = (categoryId, visited = new Set()) => {
+    if (visited.has(categoryId)) return '';
+    visited.add(categoryId);
+
+    const category = categoryMap.get(categoryId);
+    if (!category) return '';
+
+    // If parent is root or doesn't exist, return just the category ID
+    if (!category.parentId || category.parentId === 'root') {
+      return category.id;
+    }
+
+    // Recursively build the parent path
+    const parentPath = buildPath(category.parentId, visited);
+    return parentPath ? `${parentPath}/${category.id}` : category.id;
+  };
+
+  const paths = new Set();
+  categories.forEach(category => {
+    const path = buildPath(category.id);
+    if (path) {
+      paths.add(path);
+    }
+  });
+
+  return Array.from(paths).map(path => ({ path }));
+};
+
+/**
  * Transforms a Salesforce product to an ACO product.
  *
  * @param {SalesforceProduct} product - The Salesforce product.
@@ -189,6 +231,7 @@ const transformProduct = product => {
       ...transformCustomAttributes(product.customAttributes),
     ],
     images: transformImages(product.images),
+    routes: transformCategoryRoutes(product.categories),
   };
 
   //add configurations
@@ -197,15 +240,17 @@ const transformProduct = product => {
   }
 
   if (product.type === 'VARIANT') {
-    const masterSku = product.master.id;
-    acoProduct.links = [
-      {
-        type: 'variant_of',
-        sku: masterSku,
-      },
-    ];
-    //attributes
-    acoProduct.attributes.push(...transformVariantValues(masterSku, product.variationValues));
+    const masterSku = product?.master?.id;
+    if (masterSku) {
+      acoProduct.links = [
+        {
+          type: 'variant_of',
+          sku: masterSku,
+        },
+      ];
+      //attributes
+      acoProduct.attributes.push(...transformVariantValues(masterSku, product.variationValues));
+    }
   }
 
   // Handle parent bundle product (type BUNDLE) using correct bundles array structure
@@ -221,7 +266,6 @@ const transformProduct = product => {
     }));
   }
 
-  // @ts-ignore
   return acoProduct;
 };
 

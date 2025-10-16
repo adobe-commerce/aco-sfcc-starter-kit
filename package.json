@@ -1,11 +1,11 @@
 {
   "name": "aco-sfcc-starter-kit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Adobe Inc.",
   "license": "Apache-2.0",
   "private": true,
   "dependencies": {
-    "@adobe-commerce/aco-ts-sdk": "^1.0.0",
+    "@adobe-commerce/aco-ts-sdk": "^1.1.0",
     "@adobe/aio-lib-ims": "^8.1.0",
     "@adobe/aio-lib-state": "^5.1.0",
     "@adobe/aio-sdk": "^6",

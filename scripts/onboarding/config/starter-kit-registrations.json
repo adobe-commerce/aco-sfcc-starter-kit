@@ -3,5 +3,6 @@
   "delta": ["backoffice"],
   "metadata": ["backoffice"],
   "product": ["backoffice"],
-  "priceBook": ["backoffice"]
+  "priceBook": ["backoffice"],
+  "category": ["backoffice"]
 }

@@ -30,9 +30,10 @@ jest.mock('../../../../api', () => ({
   configureAcoClient: jest.fn(),
   configureSalesforceApiOptions: jest.fn(),
   createSalesforceAdminHttpClient: jest.fn(),
-  getSalesforceSiteCatalogId: jest.fn(),
+  getSiteCatalogId: jest.fn(),
   syncAllMetadata: jest.fn(),
   syncAllPriceBooks: jest.fn(),
+  syncAllCategories: jest.fn(),
   syncAllProducts: jest.fn(),
 }));
 
@@ -42,9 +43,10 @@ const {
   configureAcoClient,
   configureSalesforceApiOptions,
   createSalesforceAdminHttpClient,
-  getSalesforceSiteCatalogId,
+  getSiteCatalogId,
   syncAllMetadata,
   syncAllPriceBooks,
+  syncAllCategories,
   syncAllProducts,
 } = require('../../../../api');
 const action = require('../../../../actions/full/external/sync/index.js');
@@ -69,9 +71,10 @@ beforeEach(() => {
   configureAcoClient.mockReset();
   configureSalesforceApiOptions.mockReset();
   createSalesforceAdminHttpClient.mockReset();
-  getSalesforceSiteCatalogId.mockReset();
+  getSiteCatalogId.mockReset();
   syncAllMetadata.mockReset();
   syncAllPriceBooks.mockReset();
+  syncAllCategories.mockReset();
   syncAllProducts.mockReset();
 });
 
@@ -92,9 +95,10 @@ describe('full-external-sync', () => {
     configureSalesforceApiOptions.mockReturnValue({ sf: 'config' });
     configureAcoClient.mockReturnValue({ aco: 'config' });
     createSalesforceAdminHttpClient.mockResolvedValue({ sf: 'client' });
-    getSalesforceSiteCatalogId.mockResolvedValue({ ok: true, json: () => Promise.resolve({ id: 'catalog-123' }) });
+    getSiteCatalogId.mockResolvedValue('catalog-123');
     syncAllMetadata.mockResolvedValue();
     syncAllPriceBooks.mockResolvedValue();
+    syncAllCategories.mockResolvedValue();
     syncAllProducts.mockResolvedValue();
 
     await action.main({
@@ -126,9 +130,10 @@ describe('full-external-sync', () => {
     configureSalesforceApiOptions.mockReturnValue({ sf: 'options' });
     configureAcoClient.mockReturnValue({ aco: 'options' });
     createSalesforceAdminHttpClient.mockResolvedValue({ sf: 'client' });
-    getSalesforceSiteCatalogId.mockResolvedValue({ ok: true, json: () => Promise.resolve({ id: 'catalog-456' }) });
+    getSiteCatalogId.mockResolvedValue('catalog-456');
     syncAllMetadata.mockResolvedValue();
     syncAllPriceBooks.mockResolvedValue();
+    syncAllCategories.mockResolvedValue();
     syncAllProducts.mockResolvedValue();
 
     const response = await action.main(fakeParams);
@@ -136,7 +141,7 @@ describe('full-external-sync', () => {
     expect(configureSalesforceApiOptions).toHaveBeenCalledWith(fakeParams);
     expect(configureAcoClient).toHaveBeenCalledWith(fakeParams);
     expect(createSalesforceAdminHttpClient).toHaveBeenCalledWith({ sf: 'options' });
-    expect(getSalesforceSiteCatalogId).toHaveBeenCalledWith({ sf: 'client' }, 'test-org', 'test-site');
+    expect(getSiteCatalogId).toHaveBeenCalledWith({ sf: 'client' }, 'test-org', 'test-site', expect.anything());
 
     expect(syncAllMetadata).toHaveBeenCalledWith({ aco: 'options' }, ['en_US', 'fr_FR'], mockLoggerInstance);
     expect(syncAllPriceBooks).toHaveBeenCalledWith(
@@ -144,6 +149,14 @@ describe('full-external-sync', () => {
       { aco: 'options' },
       'test-org',
       'test-site',
+      mockLoggerInstance,
+    );
+    expect(syncAllCategories).toHaveBeenCalledWith(
+      { sf: 'options' },
+      { aco: 'options' },
+      'test-org',
+      'test-site',
+      ['en_US', 'fr_FR'],
       mockLoggerInstance,
     );
 
@@ -187,7 +200,10 @@ describe('full-external-sync', () => {
     configureSalesforceApiOptions.mockReturnValue({ sf: 'options' });
     configureAcoClient.mockReturnValue({ aco: 'options' });
     createSalesforceAdminHttpClient.mockResolvedValue({ sf: 'client' });
-    getSalesforceSiteCatalogId.mockResolvedValue({ ok: false, status: 404, statusText: 'Not Found' });
+
+    const { StarterKitActionError } = require('../../../../actions/responses');
+    const catalogError = new StarterKitActionError('Failed to retrieve catalog id from Salesforce', 404, 'Not Found');
+    getSiteCatalogId.mockRejectedValue(catalogError);
 
     const response = await action.main(fakeParams);
 
@@ -202,8 +218,10 @@ describe('full-external-sync', () => {
     configureSalesforceApiOptions.mockReturnValue({ sf: 'options' });
     configureAcoClient.mockReturnValue({ aco: 'options' });
     createSalesforceAdminHttpClient.mockResolvedValue({ sf: 'client' });
-    getSalesforceSiteCatalogId.mockResolvedValue({ ok: true, json: () => Promise.resolve({ id: 'catalog-789' }) });
-    syncAllMetadata.mockRejectedValue(new Error('Full sync failed'));
+    getSiteCatalogId.mockResolvedValue('catalog-789');
+    syncAllMetadata.mockResolvedValue();
+    syncAllPriceBooks.mockResolvedValue();
+    syncAllCategories.mockRejectedValue(new Error('Category sync failed'));
 
     const response = await action.main(fakeParams);
 
@@ -211,10 +229,12 @@ describe('full-external-sync', () => {
       statusCode: 500,
       body: {
         success: false,
-        error: 'Full sync failed',
+        error: 'Category sync failed',
       },
     });
-    expect(mockLoggerInstance.error).toHaveBeenCalledWith('Error executing full site sync: Error: Full sync failed');
+    expect(mockLoggerInstance.error).toHaveBeenCalledWith(
+      'Error executing full site sync: Error: Category sync failed',
+    );
     expect(mockState.put).toHaveBeenCalledWith('fullSyncInProgress', 'false', { ttl: 31536000 });
   });
 
@@ -223,11 +243,13 @@ describe('full-external-sync', () => {
     configureSalesforceApiOptions.mockReturnValue({ sf: 'options' });
     configureAcoClient.mockReturnValue({ aco: 'options' });
     createSalesforceAdminHttpClient.mockResolvedValue({ sf: 'client' });
-    getSalesforceSiteCatalogId.mockResolvedValue({ ok: true, json: () => Promise.resolve({ id: 'catalog-999' }) });
+    getSiteCatalogId.mockResolvedValue('catalog-999');
+    syncAllMetadata.mockResolvedValue();
+    syncAllPriceBooks.mockResolvedValue();
 
     const { StarterKitActionError } = require('../../../../actions/responses');
-    const customError = new StarterKitActionError('Full sync validation failed', 422, 'Unprocessable Entity');
-    syncAllMetadata.mockRejectedValue(customError);
+    const customError = new StarterKitActionError('Category validation failed', 422, 'Unprocessable Entity');
+    syncAllCategories.mockRejectedValue(customError);
 
     const response = await action.main(fakeParams);
 
@@ -235,7 +257,7 @@ describe('full-external-sync', () => {
       statusCode: 422,
       body: {
         success: false,
-        error: 'Full sync validation failed',
+        error: 'Category validation failed',
       },
     });
     expect(mockState.put).toHaveBeenCalledWith('fullSyncInProgress', 'false', { ttl: 31536000 });
