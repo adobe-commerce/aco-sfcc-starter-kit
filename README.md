@@ -1,6 +1,7 @@
 # ACO SFCC Starter Kit
 
-> [!Important] Installation of the custom ACO SFCC Cartridge is required:
+> [!IMPORTANT]
+> Installation of the custom ACO SFCC Cartridge is required:
 > [int_adobe_commerce_optimizer](https://github.com/adobe-commerce/aco-sfcc-cartridges).
 
 ![Starter Kit Flow Diagram](./docs/images/diagram.png)
@@ -131,7 +132,8 @@ Run the following command to deploy your starter kit to your Developer Console p
 aio app deploy
 ```
 
-> [!TIP] Run the `aio app deploy` command with `--force-build --force-deploy` flags to force a clean build.
+> [!TIP]
+> Run the `aio app deploy` command with `--force-build --force-deploy` flags to force a clean build.
 
 #### Onboard Your Starter Kit Actions
 
@@ -238,7 +240,8 @@ Entities Syncronized:
 
 - Categories
 
-> [!NOTE] Only letters, numbers, and hyphens are allowed in ACO category slugs.
+> [!NOTE]
+> Only letters, numbers, and hyphens are allowed in ACO category slugs.
 
 While syncronizing, the SFCC category ids are sanitized to remove special characters. Example:
 `parent_cat/child_cat_1/child_cat_2/child_cat_3` becomes `parentcat/childcat1/childcat2/childcat3`
