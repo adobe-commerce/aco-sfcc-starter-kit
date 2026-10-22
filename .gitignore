@@ -45,3 +45,8 @@ logs
 # IDE
 .cursor
 .idea
+
+#AI
+.scout/
+.claude/
+
